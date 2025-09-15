@@ -1,0 +1,163 @@
+name: Deploy API to Production
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    services:
+      mariadb:
+        image: mariadb:10.9
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: todo_api_test
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Setup test environment
+      run: |
+        cp .env.example .env
+        sed -i 's/DB_HOST=.*/DB_HOST=localhost/' .env
+        sed -i 's/DB_PORT=.*/DB_PORT=3306/' .env
+        sed -i 's/DB_USER=.*/DB_USER=root/' .env
+        sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=root/' .env
+        sed -i 's/DB_NAME=.*/DB_NAME=todo_api_test/' .env
+        sed -i 's/NODE_ENV=.*/NODE_ENV=test/' .env
+    
+    - name: Run tests
+      run: npm test
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Create production environment file
+      run: |
+        cat > .env << EOF
+        # Database Configuration
+        DB_HOST=${{ secrets.DB_HOST }}
+        DB_PORT=${{ secrets.DB_PORT }}
+        DB_USER=${{ secrets.DB_USER }}
+        DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+        DB_NAME=${{ secrets.DB_NAME }}
+        
+        # Server Configuration
+        PORT=${{ secrets.PORT || '3001' }}
+        NODE_ENV=production
+        
+        # Security
+        JWT_SECRET=${{ secrets.JWT_SECRET }}
+        EOF
+    
+    - name: Build application
+      run: npm run build
+    
+    - name: Create deployment archive
+      run: |
+        tar -czf todo-api.tar.gz \
+          dist/ \
+          package.json \
+          package-lock.json \
+          drizzle/ \
+          drizzle.config.ts \
+          swagger.yml \
+          .env
+    
+    - name: Deploy to server
+      uses: appleboy/ssh-action@v0.1.5
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        port: ${{ secrets.PORT }}
+        script: |
+          # Create deployment directory
+          sudo mkdir -p /var/www/todo-api
+          cd /var/www/todo-api
+          
+          # Backup current deployment
+          if [ -d "current" ]; then
+            sudo mv current backup-$(date +%Y%m%d-%H%M%S)
+          fi
+          
+          # Create new deployment directory
+          sudo mkdir -p releases/$(date +%Y%m%d-%H%M%S)
+          cd releases/$(date +%Y%m%d-%H%M%S)
+    
+    - name: Copy files to server
+      uses: appleboy/scp-action@v0.1.4
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        port: ${{ secrets.PORT }}
+        source: "todo-api.tar.gz"
+        target: "/var/www/todo-api/releases/$(date +%Y%m%d-%H%M%S)/"
+    
+    - name: Setup and start application
+      uses: appleboy/ssh-action@v0.1.5
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        port: ${{ secrets.PORT }}
+        script: |
+          cd /var/www/todo-api/releases/$(date +%Y%m%d-%H%M%S)
+          
+          # Extract files
+          sudo tar -xzf todo-api.tar.gz
+          sudo rm todo-api.tar.gz
+          
+          # Install production dependencies
+          sudo npm ci --only=production
+          
+          # Environment file is already included in the deployment archive
+          
+          # Run database migrations
+          sudo npm run db:migrate
+          
+          # Update symlink to current release
+          sudo ln -sfn /var/www/todo-api/releases/$(date +%Y%m%d-%H%M%S) /var/www/todo-api/current
+          
+          # Restart application using PM2
+          cd /var/www/todo-api/current
+          sudo pm2 stop todo-api || true
+          sudo pm2 start dist/server.js --name todo-api
+          sudo pm2 save
+          
+          # Clean up old releases (keep last 3)
+          cd /var/www/todo-api/releases
+          sudo ls -t | tail -n +4 | sudo xargs rm -rf
+          
+          echo "🚀 Deployment completed successfully!"
