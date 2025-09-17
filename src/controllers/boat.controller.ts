@@ -89,5 +89,16 @@ export class BoatController {
       res.status(500).json({ message: 'Erreur pendant la navigation du bateau.' });
     }
   }
+  getAvailablePorts=async (req: Request, res: Response): Promise<void> => {
+    try {
+      const ports = await boatService.getAvailablePortsFromBroker();
+      res.status(200).json({ ports });
+    } catch (error) {
+      console.error('Erreur lors de la récupération des ports disponibles :', error);
+      res.status(500).json({ message: 'Erreur serveur : impossible de récupérer les ports disponibles.' });
+    }
+  }
+ 
+
 }
 

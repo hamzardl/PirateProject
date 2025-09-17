@@ -57,4 +57,17 @@ export class BoatService {
       throw new Error("Échec de la navigation.");
     }
   }
+   async getAvailablePortsFromBroker  (): Promise<string[]> {
+    try {
+      const { data: users } = await axios.get(`${BROKER_BASE_URL}/users`);
+
+      // Supposons que chaque user a un champ `portName`
+      const ports = users.map((user: any) => user.portName);
+
+      return ports;
+    } catch (error) {
+      console.error('Erreur de communication avec le broker :', error);
+      throw new Error("Erreur lors de la récupération des ports.");
+    }
+  }
 }

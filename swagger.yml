@@ -242,6 +242,39 @@ paths:
                   message:
                     type: string
                     example: Erreur pendant la navigation du bateau.
+  /getAvailablePorts:
+    get:
+      summary: Obtenir les ports disponibles
+      description: Récupère la liste des ports disponibles via le broker.
+      tags:
+        - Boat
+      responses:
+        '200':
+          description: Liste des ports disponibles récupérée avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ports:
+                    type: array
+                    items:
+                      type: string
+                example:
+                  ports:
+                    - Tortuga
+                    - Port Royal
+                    - Nassau
+        '500':
+          description: Erreur interne du serveur
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Erreur serveur : impossible de récupérer les ports disponibles.
 components:
   schemas:
     Boat:

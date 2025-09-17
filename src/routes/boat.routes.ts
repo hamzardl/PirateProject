@@ -16,5 +16,6 @@ export const createBoatRoutes = (): Router => {
   router.patch('/boat/:id',authenticateToken, boatController.modifyBoat);
   router.post('/auth', authController.login);
   router.post('/navigateToAnotherPort/:destination', boatController.navigateToAnotherPort);
+  router.get('/getAvailablePorts', boatController.getAvailablePorts);
   return router;
 };
