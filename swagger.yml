@@ -12,7 +12,7 @@ paths:
       tags:
         - Boat
       responses:
-        200:
+        '200':
           description: Liste des bateaux
           content:
             application/json:
@@ -61,14 +61,101 @@ paths:
               created_by: "user-uuid-3"
               last_modified: "2025-09-13T12:00:00.000Z"
       responses:
-        201:
+        '201':
           description: Bateau créé avec succès
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Boat'
-        400:
+        '400':
           description: Mauvaise requête
+
+  /boat/{id}:
+    delete:
+      summary: Supprimer un bateau par son ID
+      tags:
+        - Boat
+      parameters:
+        - name: id
+          in: path
+          description: ID du bateau à supprimer (UUID)
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Bateau supprimé avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Boat deleted successfully
+        '404':
+          description: Bateau non trouvé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Boat not found
+
+    patch:
+      summary: Modifier un bateau par son ID
+      tags:
+        - Boat
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID du bateau à modifier (UUID)
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BoatRequestUpdate'
+            example:
+              goldCargo: 88000
+              captain: "Edward Teach"
+              status: "lookingForAFight"
+              crewSize: 120
+              last_modified: "2025-09-13T14:30:00.000Z"
+      responses:
+        '200':
+          description: Bateau modifié avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Boat'
+        '400':
+          description: Mauvaise requête
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid input data
+        '404':
+          description: Bateau non trouvé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Boat not found
 
 components:
   schemas:
@@ -142,6 +229,29 @@ components:
         created_by:
           type: string
           format: uuid
+        last_modified:
+          type: string
+          format: date-time
+
+    BoatRequestUpdate:
+      type: object
+      properties:
+        goldCargo:
+          type: integer
+          minimum: 0
+          maximum: 1000000
+        captain:
+          type: string
+        status:
+          type: string
+          enum:
+            - docked
+            - sailing
+            - lookingForAFight
+        crewSize:
+          type: integer
+          minimum: 1
+          maximum: 500
         last_modified:
           type: string
           format: date-time

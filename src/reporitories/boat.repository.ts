@@ -36,6 +36,26 @@ async addBoat(boat: Boat): Promise<Boat> {
     const result = await db.select().from(boatTable).where(eq(boatTable.id, id)).limit(1);
     return result.length > 0 ? this.mapToBoat(result[0]) : null;
   }
+  async deleteBoat(id: string): Promise<void> {
+    await db.delete(boatTable).where(eq(boatTable.id, id));
+  }
+ async modifyBoat(updatedBoat: BoatRequestUpdate, id: string): Promise<BoatRequestUpdate | null> {
+    const existing = await db.select().from(boatTable).where(eq(boatTable.id, id)).limit(1);
+    if (existing.length === 0) return null;
+
+    await db.update(boatTable)
+      .set({
+        goldCargo: updatedBoat.goldCargo,
+        captain: updatedBoat.captain,
+        status: updatedBoat.status,
+        crewSize: updatedBoat.crewSize,
+        last_modified: new Date(updatedBoat.last_modified), 
+      })
+      .where(eq(boatTable.id, id));
+
+    const result = await db.select().from(boatTable).where(eq(boatTable.id, id)).limit(1);
+    return result.length > 0 ? this.mapToBoat(result[0]) : null;
+  }
       private mapToBoat(row: any): Boat {
         return {
           id: row.id,            // varchar(36) UUID

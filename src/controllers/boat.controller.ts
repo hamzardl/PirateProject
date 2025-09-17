@@ -28,5 +28,30 @@ export class BoatController {
       next(error);
     }
   };
+     deleteBoat = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+    const { id } = req.params;
+    console.log(`📋 Deleting boat with id: ${id}`);
+    try {
+      await boatService.deleteBoat(id);
+      res.status(200).json({ message: `Boat ${id} deleted.` });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  modifyBoat = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+     const { id } = req.params;
+     console.log(`Modifying boat with id: ${id}`);
+    const updatedBoat: BoatRequestUpdate = req.body;
+    try {
+      const result = await boatService.modifyBoat(updatedBoat, id);
+      res.status(200).json({
+        message: 'Boat updated successfully',
+        boat: result
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 

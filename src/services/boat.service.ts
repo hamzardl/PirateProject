@@ -18,5 +18,16 @@ export class BoatService {
     await boatRepository.addBoat(newBoat);
     return newBoat;
   }
+  async deleteBoat(id: string): Promise<void> {
+    // Appel au repository (à implémenter)
+    await boatRepository.deleteBoat(id);
+  }
+  async modifyBoat(updatedBoat: BoatRequestUpdate, id: string): Promise<BoatRequestUpdate | null> {
+    console.log("hello arrive service modify ");
+    // Appel au repository (à implémenter)
+     console.log(updatedBoat);
+       console.log("hello envoie repository modify ");
+    return await boatRepository.modifyBoat(updatedBoat,id);
+  }
   
 }

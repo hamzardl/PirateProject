@@ -9,5 +9,7 @@ export const createBoatRoutes = (): Router => {
 // Ensuite, tu peux utiliser ce middleware dans tes routes comme ceci :
   router.get('/boats', boatController.getAllBoats);
   router.post('/boat', boatController.addBoat);
+  router.delete('/boat/:id',boatController.deleteBoat);
+  router.patch('/boat/:id', boatController.modifyBoat);
   return router;
 };
