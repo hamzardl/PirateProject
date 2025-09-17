@@ -53,5 +53,41 @@ export class BoatController {
       next(error);
     }
   };
+    validateDestinationPort=async (req: Request, res: Response) => {
+    try {
+      const destination = req.params.destination;
+
+      const isValid = await boatService.isValidDestination(destination);
+
+      if (!isValid) {
+        return res.status(400).json({ message: 'Port invalide.' });
+      }
+
+      res.status(200).json({ message: 'Port valide.' });
+    } catch (error) {
+      res.status(500).json({ message: 'Erreur serveur.' });
+    }
+  };
+  // ✅ Méthode pour naviguer vers un port
+  navigateToAnotherPort= async (req: Request, res: Response) => {
+    try {
+      const destination = req.params.destination;
+      const boat = req.body;
+
+      // Valider le port d’abord
+      const isValid = await boatService.isValidDestination(destination);
+
+      if (!isValid) {
+        return res.status(400).json({ message: 'Port invalide.' });
+      }
+
+      // Appeler le broker
+      const response = await boatService.sendBoatToDestination(destination, boat);
+
+      res.status(200).json(response);
+    } catch (error) {
+      res.status(500).json({ message: 'Erreur pendant la navigation du bateau.' });
+    }
+  }
 }
 

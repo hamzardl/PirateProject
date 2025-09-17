@@ -183,6 +183,65 @@ paths:
                   message:
                     type: string
                     example: Invalid username or password
+  /navigateToAnotherPort/{destination}:
+    post:
+      summary: Naviguer vers un autre port
+      description: Valide un port de destination et envoie le bateau vers ce port.
+      tags:
+        - Boat
+      parameters:
+        - name: destination
+          in: path
+          required: true
+          description: Nom ou identifiant du port de destination
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BoatRequest'
+            example:
+              name: "Flying Dutchman"
+              goldCargo: 75000
+              created_at: "2025-09-13T12:00:00.000Z"
+              captain: "Davy Jones"
+              status: "docked"
+              crewSize: 150
+              created_by: "user-uuid-3"
+              last_modified: "2025-09-13T12:00:00.000Z"
+      responses:
+        '200':
+          description: Bateau envoyé avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Boat sent to destination successfully
+        '400':
+          description: Port invalide
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Port invalide.
+        '500':
+          description: Erreur interne du serveur
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Erreur pendant la navigation du bateau.
 components:
   schemas:
     Boat:

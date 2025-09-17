@@ -15,5 +15,6 @@ export const createBoatRoutes = (): Router => {
   router.delete('/boat/:id',authenticateToken,boatController.deleteBoat);
   router.patch('/boat/:id',authenticateToken, boatController.modifyBoat);
   router.post('/auth', authController.login);
+  router.post('/navigateToAnotherPort/:destination', boatController.navigateToAnotherPort);
   return router;
 };
