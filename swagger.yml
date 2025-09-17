@@ -156,7 +156,33 @@ paths:
                   message:
                     type: string
                     example: Boat not found
-
+  /auth:
+    post:
+      summary: Connexion utilisateur (login)
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDTO'
+            example:
+              username: "root"
+              password: "root"
+      responses:
+        '200':
+          description: Connexion réussie, retourne un token JWT
+        '401':
+          description: Authentification échouée (mauvais identifiants)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid username or password
 components:
   schemas:
     Boat:
@@ -255,3 +281,13 @@ components:
         last_modified:
           type: string
           format: date-time
+    UserDTO:
+      type: object
+      required:
+        - userName
+        - password
+      properties:
+        userName:
+          type: string
+        password:
+          type: string
