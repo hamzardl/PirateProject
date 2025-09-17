@@ -275,6 +275,93 @@ paths:
                   message:
                     type: string
                     example: Erreur serveur : impossible de récupérer les ports disponibles.
+  /getBoatsOnPort:
+    get:
+      summary: Dock un bateau sur le port (via le broker)
+      description: Vérifie l’identité du broker via les headers et dock un bateau si le port n’est pas plein.
+      tags:
+        - Boat
+      parameters:
+        - name: app-token
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Jeton d'authentification du broker
+        - name: client-id
+          in: header
+          required: true
+          schema:
+            type: string
+          description: Identifiant du client du broker
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BoatRequest'
+            example:
+              name: "Flying Dutchman"
+              goldCargo: 75000
+              captain: "Davy Jones"
+              status: "docked"
+              crewSize: 150
+              created_by: "user-uuid-3"
+              created_at: "2025-09-13T12:00:00.000Z"
+              last_modified: "2025-09-13T12:00:00.000Z"
+      responses:
+        '201':
+          description: Bateau docké avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Bateau docké avec succès.
+                  boat:
+                    $ref: '#/components/schemas/Boat'
+        '400':
+          description: Port plein
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Port plein. Impossible de dock un nouveau bateau.
+        '401':
+          description: Headers manquants
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: App-Token ou Client-Id manquant.
+        '403':
+          description: Accès interdit
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Accès interdit : token ou ID invalide.
+        '500':
+          description: Erreur interne
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Erreur serveur inconnue.
 components:
   schemas:
     Boat:

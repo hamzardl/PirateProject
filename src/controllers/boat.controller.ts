@@ -99,6 +99,39 @@ export class BoatController {
     }
   }
  
+async getBoatsOnPort(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const appToken = req.headers['app-token'];
+      const clientId = req.headers['client-id'];
+
+      // Vérification des headers
+      if (!appToken || !clientId) {
+         res.status(401).json({ message: 'App-Token ou Client-Id manquant.' });
+      }
+
+      // Vérification des credentials
+      const expectedAppToken = process.env.BROKER_APP_TOKEN;
+      const expectedClientId = process.env.BROKER_CLIENT_ID;
+
+      if (appToken !== expectedAppToken || clientId !== expectedClientId) {
+         res.status(403).json({ message: 'Accès interdit : token ou ID invalide.' });
+      }
+
+      // Vérifie la capacité du port
+      const boats = await boatService.getAllBoats();
+      if (boats.length >= 10) {
+         res.status(400).json({ message: 'Port plein. Impossible de dock un nouveau bateau.' });
+      }
+
+      // Ajout du bateau
+      const boat: Boat = req.body;
+      const createdBoat = await boatService.addBoat(boat);
+
+      res.status(201).json({ message: 'Bateau docké avec succès.', boat: createdBoat });
+    } catch (error) {
+      next(error);
+    }
+  }
 
 }
 
