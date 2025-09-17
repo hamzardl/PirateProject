@@ -18,16 +18,16 @@ export const authenticateToken = async (req: AuthenticatedRequest, res: Response
   } else if (req.headers['x-access-token']) {
     token = req.headers['x-access-token'] as string;
   }
-
+console.log(token);
   if (!token) {
     res.status(401).json({ success: false, message: 'Access denied. No token provided.' });
     return;
   }
-
   try {
-    const decoded = jwt.verify(token, SECRET_KEY) as { username: string };
-
+    //const decoded = jwt.verify(token, SECRET_KEY) as { username: string };
+  //console.log(decoded);
     const tokenRecord = await tokenRepository.findByToken(token);
+       console.log(tokenRecord);
     if (!tokenRecord) {
       res.status(403).json({ success: false, message: 'Token not found.' });
       return;
@@ -44,7 +44,7 @@ export const authenticateToken = async (req: AuthenticatedRequest, res: Response
       return;
     }
 
-    req.user = { username: decoded.username };
+    //req.user = { username: decoded.username };
     next();
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
