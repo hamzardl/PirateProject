@@ -8,6 +8,7 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import { createHealthRoutes } from './routes/health.routes';
 import { errorHandler } from './middleware/error.middleware';
+import { createBoatRoutes } from './routes/boat.routes';
 
 dotenv.config();
 
@@ -24,8 +25,8 @@ app.use(express.json());
 
 app.use(cookieParser());
 
+app.use('/api', createBoatRoutes());
 app.use('/', createHealthRoutes());
-
 const swaggerDocument = yaml.load(path.join(__dirname, '../swagger.yml'));
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 

@@ -1,6 +1,147 @@
 openapi: 3.0.0
 info:
-  title: Projet pirate  API
+  title: Mon API
   version: 1.0.0
 servers:
-- url: http://localhost:3001/api/
+  - url: http://localhost:3001/api
+
+paths:
+  /boats:
+    get:
+      summary: Obtenir tous les bateaux
+      tags:
+        - Boat
+      responses:
+        200:
+          description: Liste des bateaux
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Boat'
+              example:
+                - id: "uuid-1"
+                  name: "Black Pearl"
+                  goldCargo: 50000
+                  created_at: "2023-10-19T00:00:00.000Z"
+                  captain: "Jack Sparrow"
+                  status: "sailing"
+                  crewSize: 50
+                  created_by: "user-uuid-1"
+                  last_modified: "2023-10-19T00:00:00.000Z"
+                - id: "uuid-2"
+                  name: "Queen Anne's Revenge"
+                  goldCargo: 10000
+                  created_at: "2023-10-20T00:00:00.000Z"
+                  captain: "Blackbeard"
+                  status: "docked"
+                  crewSize: 80
+                  created_by: "user-uuid-2"
+                  last_modified: "2023-10-20T00:00:00.000Z"
+
+  /boat:
+    post:
+      summary: Créer un nouveau bateau
+      tags:
+        - Boat
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BoatRequest'
+            example:
+              name: "Flying Dutchman"
+              goldCargo: 75000
+              created_at: "2025-09-13T12:00:00.000Z"
+              captain: "Davy Jones"
+              status: "docked"
+              crewSize: 150
+              created_by: "user-uuid-3"
+              last_modified: "2025-09-13T12:00:00.000Z"
+      responses:
+        201:
+          description: Bateau créé avec succès
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Boat'
+        400:
+          description: Mauvaise requête
+
+components:
+  schemas:
+    Boat:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        goldCargo:
+          type: integer
+          minimum: 0
+          maximum: 1000000
+        created_at:
+          type: string
+          format: date-time
+        captain:
+          type: string
+        status:
+          type: string
+          enum:
+            - docked
+            - sailing
+            - lookingForAFight
+        crewSize:
+          type: integer
+          minimum: 1
+          maximum: 500
+        created_by:
+          type: string
+          format: uuid
+        last_modified:
+          type: string
+          format: date-time
+
+    BoatRequest:
+      type: object
+      required:
+        - name
+        - goldCargo
+        - created_at
+        - captain
+        - status
+        - crewSize
+        - created_by
+        - last_modified
+      properties:
+        name:
+          type: string
+        goldCargo:
+          type: integer
+          minimum: 0
+          maximum: 1000000
+        created_at:
+          type: string
+          format: date-time
+        captain:
+          type: string
+        status:
+          type: string
+          enum:
+            - docked
+            - sailing
+            - lookingForAFight
+        crewSize:
+          type: integer
+          minimum: 1
+          maximum: 500
+        created_by:
+          type: string
+          format: uuid
+        last_modified:
+          type: string
+          format: date-time
