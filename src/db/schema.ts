@@ -18,18 +18,17 @@ export const users = mysqlTable("User", {
 });
 
 export const boatTable = mysqlTable('boattable', {
-  id: varchar('id', { length: 36 }).primaryKey(), // ID unique (UUID en string)
-  name: varchar('name', { length: 100 }).notNull(), // Nom du bateau
-  goldCargo: int('goldCargo').notNull(), // Quantité d'or à bord (0 à 1M)
-  created_at : timestamp('created_at').defaultNow().notNull(), // Date de création
-  captain: varchar('captain', { length: 50 }).notNull(), // Nom du capitaine
-  status: mysqlEnum('status', ['docked', 'sailing', 'lookingForAFight']).notNull(), // État du bateau
-  crewSize: int('crewSize').notNull(), // Taille de l'équipage (1 à 500)
-  created_by : varchar('created_by', { length: 36 }).notNull(), // Créateur du bateau (UUID user)
-  last_modified: timestamp('last_modified').defaultNow().onUpdateNow().notNull(), // Dernière modif
+  id: varchar('id', { length: 36 }).primaryKey(), 
+  name: varchar('name', { length: 100 }).notNull(), 
+  goldCargo: int('goldCargo').notNull(),
+  createdAt : timestamp('createdAt').defaultNow().notNull(), 
+  captain: varchar('captain', { length: 50 }).notNull(),
+  status: mysqlEnum('status', ['docked', 'sailing', 'lookingForAFight']).notNull(),
+  crewSize: int('crewSize').notNull(), 
+  createdBy : varchar('createdBy', { length: 36 }).notNull(), 
+  lastModified: timestamp('lastModified').defaultNow().onUpdateNow().notNull(), 
 },
 (table) => ({
-  // Contraintes CHECK en SQL pur, reconnues par Drizzle
   goldCargoCheck: {
     constraint: 'CHECK (goldCargo BETWEEN 0 AND 1000000)',
   },

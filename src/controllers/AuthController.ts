@@ -26,7 +26,7 @@ export class AuthController {
 
       // Génération du token JWT
       const token = await generateToken(user);
-console.log(token);
+    console.log(token);
       // Configuration des cookies avec le token
       res.cookie('AuthToken', token, {
         httpOnly: true,

@@ -1,4 +1,4 @@
-import { Boat, BoatRequestUpdate } from '../types/boat.types';
+import { Boat, BoatRequest, BoatRequestUpdate } from '../types/boat.types';
 import { BoatRepository } from '../reporitories/boat.repository';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
@@ -13,7 +13,12 @@ export class BoatService {
   async addBoat(boat: Boat): Promise<Boat> {
     console.log(boat);
     console.log("hello arrive service ");
-    const newBoat = { ...boat, id: uuidv4(), createdAt: new Date().toISOString(), lastModified: new Date().toISOString() };
+   const newBoat = {
+  ...boat,
+  id: uuidv4(),
+  createdAt: new Date(),
+  lastModified: new Date()
+};
     // Appel au repository (à implémenter)
      console.log(newBoat);
        console.log("hello envoie repository ");
@@ -31,39 +36,62 @@ export class BoatService {
        console.log("hello envoie repository modify ");
     return await boatRepository.modifyBoat(updatedBoat,id);
   }
-   async isValidDestination (destination: string): Promise<boolean>  {
-    try {
-      const { data: users } = await axios.get(`${BROKER_BASE_URL}/users`);
-      return users.some((user: any) => user.portName === destination);
-    } catch (error) {
-      console.error('Erreur lors de la récupération des ports:', error);
-      return false;
-    }
+async isValidDestination(destination: string): Promise<boolean> {
+  try {
+    const headers = {
+      'x-client-id': 'app_601cfdad36d9f568188548de2cb108f7',
+      'authorization': 'Bearer 8b882c88b918942817d32a0469bd731f7383a356bf993edac44884e995f8b1ad',
+    };
+    const response = await axios.get(`${BROKER_BASE_URL}/users`, { headers });
+    // Accès correct à la liste des utilisateurs
+    const users = response.data.users;
+    // Log facultatif pour debug
+    console.log("Liste des ports disponibles :", users);
+    // Vérifie si destination est bien dans la liste
+    return users.includes(destination);
+    
+  } catch (error) {
+    console.error('Erreur lors de la récupération des ports:', error);
+    return false;
   }
-   async sendBoatToDestination (destination: string, boat: any): Promise<any>  {
-    try {
-      const headers = {
-        'Client-Id':"", // Adapté selon ton auth
-        'App-T':"" ,
-      };
-      const { data } = await axios.post(
-        `${BROKER_BASE_URL}/ship/sail/${destination}`,
-        boat,
-        { headers }
-      );
-      return data;
-    } catch (error: any) {
-      console.error('Erreur lors de l’envoi du bateau :', error.response?.data || error.message);
-      throw new Error("Échec de la navigation.");
-    }
+}
+
+
+async sendBoatToDestination(destination: string, boat: BoatRequest): Promise<any> {
+  try {
+    const headers = {
+      'x-client-id': 'app_601cfdad36d9f568188548de2cb108f7',
+      'authorization': 'Bearer 8b882c88b918942817d32a0469bd731f7383a356bf993edac44884e995f8b1ad',
+    };
+
+    console.log("Je suis là avant POST");
+
+    const { data } = await axios.post(
+      `${BROKER_BASE_URL}/ship/sail/${destination}`,
+      boat,
+      { headers }
+    );
+
+    console.log("J'ai passé le POST");
+    console.log(data);
+
+    return data;
+  } catch (error: any) {
+    console.log(error);
+    console.error('Erreur lors de l’envoie du bateau :', error.response?.data || error.message);
+    throw new Error("Échec de la navigation.");
   }
+}
+
    async getAvailablePortsFromBroker  (): Promise<string[]> {
     try {
-      const { data: users } = await axios.get(`${BROKER_BASE_URL}/users`);
-
-      // Supposons que chaque user a un champ `portName`
-      const ports = users.map((user: any) => user.portName);
-
+     const headers = {
+      'x-client-id': 'app_601cfdad36d9f568188548de2cb108f7',
+      'authorization': 'Bearer 8b882c88b918942817d32a0469bd731f7383a356bf993edac44884e995f8b1ad',
+    };
+    const response = await axios.get(`${BROKER_BASE_URL}/users`, { headers });
+    // Accès correct à la liste des utilisateurs
+    const ports = response.data.users;
       return ports;
     } catch (error) {
       console.error('Erreur de communication avec le broker :', error);

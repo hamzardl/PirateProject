@@ -17,12 +17,12 @@ async addBoat(boat: Boat): Promise<Boat> {
     id: boat.id,
     name: boat.name,
     goldCargo: boat.goldCargo,
-    created_at: new Date(boat.created_at), // nom SQL avec underscore + conversion en Date
+    createdAt: new Date(boat.createdAt), // nom SQL avec underscore + conversion en Date
     captain: boat.captain,
     status: boat.status,
     crewSize: boat.crewSize,
-    created_by: boat.created_by,
-    last_modified: new Date(boat.last_modified), // pareil
+    createdBy: boat.createdBy,
+    lastModified: new Date(boat.lastModified), // pareil
   });
 
   const result = await this.findById(boat.id);
@@ -40,7 +40,9 @@ async addBoat(boat: Boat): Promise<Boat> {
     await db.delete(boatTable).where(eq(boatTable.id, id));
   }
  async modifyBoat(updatedBoat: BoatRequestUpdate, id: string): Promise<BoatRequestUpdate | null> {
+  console.log("voci repository modify");
     const existing = await db.select().from(boatTable).where(eq(boatTable.id, id)).limit(1);
+    console.log(existing);
     if (existing.length === 0) return null;
 
     await db.update(boatTable)
@@ -49,7 +51,7 @@ async addBoat(boat: Boat): Promise<Boat> {
         captain: updatedBoat.captain,
         status: updatedBoat.status,
         crewSize: updatedBoat.crewSize,
-        last_modified: new Date(updatedBoat.last_modified), 
+        lastModified: new Date(updatedBoat.lastModified), 
       })
       .where(eq(boatTable.id, id));
 
@@ -61,12 +63,12 @@ async addBoat(boat: Boat): Promise<Boat> {
           id: row.id,            // varchar(36) UUID
           name: row.name,          // varchar(100)
           goldCargo: row.goldCargo,     // int
-          created_at: row.created_at,     // timestamp (ISO string)
+          createdAt: row.createdAt,     // timestamp (ISO string)
           captain: row.captain,       // varchar(50)
           status: row.status as 'docked' | 'sailing' | 'lookingForAFight', // enum
           crewSize: row.crewSize,      // int
-          created_by: row.created_by,     // varchar(36) UUID
-          last_modified: row.last_modified,  // timestamp (ISO string)
+          createdBy: row.createdBy,     // varchar(36) UUID
+          lastModified: row.lastModified,  // timestamp (ISO string)
         };
       }
 }
