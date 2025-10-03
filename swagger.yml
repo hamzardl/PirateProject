@@ -3,7 +3,7 @@ info:
   title: Mon API
   version: 1.0.0
 servers:
-  - url: http://localhost:3001/api
+  - url: http://localhost:3001
 
 paths:
   /boats:
@@ -183,6 +183,33 @@ paths:
                   message:
                     type: string
                     example: Invalid username or password
+  /register:
+    post:
+      summary: Connexion utilisateur (register Créer compte)
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDTO'
+            example:
+              username: "root"
+              password: "root"
+      responses:
+        '200':
+          description: Connexion réussie, retourne un token JWT
+        '401':
+          description: Authentification échouée (mauvais identifiants)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid username or password
   /navigateToAnotherPort/{destination}:
     post:
       summary: Naviguer vers un autre port
@@ -203,11 +230,11 @@ paths:
             schema:
               $ref: '#/components/schemas/BoatRequest'
             example:
-              name: "Flying Dutchman"
+              name: "hamza "
               goldCargo: 75000
               createdAt: "2025-09-13T12:00:00.000Z"
               captain: "Davy Jones"
-              status: "docked"
+              status: "sailing"
               crewSize: 150
               createdBy: "user-uuid-3"
               lastModified: "2025-09-13T12:00:00.000Z"
@@ -275,8 +302,8 @@ paths:
                   message:
                     type: string
                     example: Erreur serveur : impossible de récupérer les ports disponibles.
-  /getBoatsOnPort:
-    get:
+  /ship/dock:
+    post:
       summary: Dock un bateau sur le port (via le broker)
       description: Vérifie l’identité du broker via les headers et dock un bateau si le port n’est pas plein.
       tags:
@@ -466,6 +493,9 @@ components:
         - userName
         - password
       properties:
+        id:
+          type: string
+          format: uuid
         userName:
           type: string
         password:

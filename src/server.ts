@@ -10,6 +10,7 @@ import { createHealthRoutes } from './routes/health.routes';
 import { errorHandler } from './middleware/error.middleware';
 import { createBoatRoutes } from './routes/boat.routes';
 
+
 dotenv.config();
 
 const app = express();
@@ -25,7 +26,7 @@ app.use(express.json());
 
 app.use(cookieParser());
 
-app.use('/api', createBoatRoutes());
+app.use('/', createBoatRoutes());
 app.use('/', createHealthRoutes());
 const swaggerDocument = yaml.load(path.join(__dirname, '../swagger.yml'));
 app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
@@ -44,7 +45,10 @@ process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
-
+if (process.env.NODE_ENV === 'development') {
+  const swaggerDocument = yaml.load(path.join(__dirname, '../swagger.yml'));
+  app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+}
 app.listen(port, () => {
   console.log(`🚀 Server is running on port ${port}`);
   console.log(`📚 API Documentation available at http://localhost:${port}/swagger`);

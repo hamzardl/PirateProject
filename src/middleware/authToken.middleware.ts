@@ -1,51 +1,51 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
-import { TokenRepository } from '../reporitories/token.repository';
 
-const SECRET_KEY = process.env.JWT_SECRET_KEY || 'Une_cle_secrete_tres_longue_et_aleatoire_pour_le_projet';
-const tokenRepository = new TokenRepository();
+const SECRET_KEY = process.env.JWT_SECRET_KEY;
 
-export interface AuthenticatedRequest extends Request {
-  user?: { username: string };
+if (!SECRET_KEY) {
+  throw new Error('JWT_SECRET_KEY is not defined in environment variables');
 }
 
-export const authenticateToken = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+export interface AuthenticatedRequest extends Request {
+  user?: { 
+    username: string;
+    isAdmin: boolean;
+  };
+}
+
+
+export const authenticateToken = (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+): void => {
   let token: string | undefined;
+
   if (req.cookies?.AuthToken) {
     token = req.cookies.AuthToken;
-  } else if (req.headers['authorization']) {
-    token = req.headers['authorization'].split(' ')[1];
-  } else if (req.headers['x-access-token']) {
-    token = req.headers['x-access-token'] as string;
+  } 
+  /* moi j'utilsie que un cookies donc pas de header 
+  else {
+    const authHeader = req.headers['authorization'];
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.split(' ')[1];
+    } else if (req.headers['x-access-token']) {
+      token = req.headers['x-access-token'] as string;
+    }
   }
-console.log(token);
+*/
   if (!token) {
     res.status(401).json({ success: false, message: 'Access denied. No token provided.' });
     return;
   }
-  try {
-    //const decoded = jwt.verify(token, SECRET_KEY) as { username: string };
-  //console.log(decoded);
-    const tokenRecord = await tokenRepository.findByToken(token);
-       console.log(tokenRecord);
-    if (!tokenRecord) {
-      res.status(403).json({ success: false, message: 'Token not found.' });
-      return;
-    }
-
-    if (tokenRecord.revoked) {
-      res.status(403).json({ success: false, message: 'Token revoked.' });
-      return;
-    }
-
-    const expiresAt = new Date(tokenRecord.expires_at);
-    if (expiresAt < new Date()) {
-      res.status(401).json({ success: false, message: 'Token expired.' });
-      return;
-    }
-
-    //req.user = { username: decoded.username };
-    next();
+try {
+  const decoded = jwt.verify(token, SECRET_KEY) as { username: string; isAdmin: boolean };
+  req.user = {
+    username: decoded.username,
+    isAdmin: decoded.isAdmin,
+  };
+  return next();
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
       res.status(401).json({ success: false, message: 'Token expired. Please login again.' });

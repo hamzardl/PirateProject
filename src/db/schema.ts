@@ -1,8 +1,5 @@
 import { mysqlTable, varchar, boolean, timestamp, mysqlEnum, int, text } from 'drizzle-orm/mysql-core';
-
-// On défini le schéma ici. C'est ce qui sera utilisé pour créer la table dans la base de données.
-// On utilise les types de Drizzle pour définir les colonnes de la table.
-// Chaque colonne est définie avec un type, une longueur (si applicable) et des contraintes
+import { sql } from 'drizzle-orm';
 export const todos = mysqlTable('todos', {
   id: varchar('id', { length: 36 }).primaryKey(),
   text: varchar('text', { length: 500 }).notNull(),
@@ -12,10 +9,12 @@ export const todos = mysqlTable('todos', {
   updatedAt: timestamp('updated_at').defaultNow().onUpdateNow().notNull(),
 });
 export const users = mysqlTable("User", {
-  id: varchar("Id", { length: 36 }).primaryKey().notNull(), // UUID
+  id: varchar("Id", { length: 36 }).primaryKey().notNull().default(sql`UUID()`),
   userName: varchar("UserName", { length: 200 }).notNull(),
   password: varchar("Password", { length: 200 }).notNull(),
+  isAdmin: boolean("IsAdmin").notNull().default(false),
 });
+
 
 export const boatTable = mysqlTable('boattable', {
   id: varchar('id', { length: 36 }).primaryKey(), 
@@ -38,15 +37,13 @@ export const boatTable = mysqlTable('boattable', {
 }));
 
 export const tokenTable = mysqlTable('tokens', {
-  id: varchar('id', { length: 36 }).primaryKey(), // UUID du token ou ID unique
-  username: varchar('username', { length: 255 }).notNull(), // Nom d'utilisateur (du token)
-  token: text('token').notNull(), // Le JWT on amis texte parceq eu un otken eput arriver facilement a 200 et 600 lettre 
-  issued_at: timestamp('issued_at').defaultNow().notNull(), // Date d’émission
-  expires_at: timestamp('expires_at').notNull(), // Date d’expiration
-  revoked: boolean('revoked').default(false).notNull(), // Si le token est révoqué
-  created_at: timestamp('created_at').defaultNow().notNull(), // Création
-  updated_at: timestamp('updated_at').defaultNow().onUpdateNow().notNull(), // Mise à jour
+  id: varchar('id', { length: 36 }).primaryKey(), 
+  username: varchar('username', { length: 255 }).notNull(), 
+  token: text('token').notNull(), 
+  issued_at: timestamp('issued_at').defaultNow().notNull(), 
+  expires_at: timestamp('expires_at').notNull(), 
+  revoked: boolean('revoked').default(false).notNull(), 
+  created_at: timestamp('created_at').defaultNow().notNull(), 
+  updated_at: timestamp('updated_at').defaultNow().onUpdateNow().notNull(), 
 });
 
-//INSERT INTO User (id, userName, password)
-//VALUES (UUID(), 'root', 'root'); dans la base de données pour créer un utilisateur par défaut

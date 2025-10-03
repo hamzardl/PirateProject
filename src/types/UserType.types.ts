@@ -6,4 +6,5 @@ export interface User {
 export interface userDTO {
   userName: string;
   password: string;
+  isAdmin:boolean;
 }
