@@ -6,15 +6,13 @@ const SECRET_KEY = process.env.JWT_SECRET_KEY;
 if (!SECRET_KEY) {
   throw new Error('JWT_SECRET_KEY is not defined in environment variables');
 }
-
+// The role is represented by a boolean name Isadmin
 export interface AuthenticatedRequest extends Request {
   user?: { 
     username: string;
     isAdmin: boolean;
   };
 }
-
-
 export const authenticateToken = (
   req: AuthenticatedRequest,
   res: Response,
@@ -25,16 +23,6 @@ export const authenticateToken = (
   if (req.cookies?.AuthToken) {
     token = req.cookies.AuthToken;
   } 
-  /* moi j'utilsie que un cookies donc pas de header 
-  else {
-    const authHeader = req.headers['authorization'];
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      token = authHeader.split(' ')[1];
-    } else if (req.headers['x-access-token']) {
-      token = req.headers['x-access-token'] as string;
-    }
-  }
-*/
   if (!token) {
     res.status(401).json({ success: false, message: 'Access denied. No token provided.' });
     return;

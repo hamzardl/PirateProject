@@ -34,12 +34,9 @@ export class BoatRepository {
   }
   return result;
   }
-
-
   async deleteBoat(id: string): Promise<void> {
     await db.delete(boatTable).where(eq(boatTable.id, id));
   }
-
 async modifyBoat(updatedBoat: BoatRequestUpdate, id: string): Promise<BoatRequestUpdate | null> {
   const existing = await this.findById(id);
   if (!existing) return null;
@@ -52,7 +49,6 @@ async modifyBoat(updatedBoat: BoatRequestUpdate, id: string): Promise<BoatReques
       lastModified: new Date(updatedBoat.lastModified),
     })
     .where(eq(boatTable.id, id));
-
   const result = await this.findById(id);
   return result ? this.mapToBoat(result) : null;
 }

@@ -8,38 +8,41 @@ import bcrypt from 'bcrypt';
 
 export class AuthRepository {
 
-async login(username: string, password: string): Promise<userDTO | null> {
+async login(username: string, passwordHashed: string): Promise<userDTO | null> {
   const result = await db
     .select()
     .from(users)
-    .where(eq(users.userName, username)) 
+    .where(
+      and(
+        eq(users.userName, username),
+        eq(users.password, passwordHashed)
+      )
+    )
     .limit(1);
-  if (result.length === 0) {
+
+  if (!result[0]) {
     return null;
   }
-  const user = result[0];
-  const isPasswordValid = await bcrypt.compare(password, user.password);
-  if (!isPasswordValid) {
+
+  return result[0];
+}
+
+async getUserByUsername(username: string) {
+  const result = await db
+    .select()
+    .from(users)
+    .where(eq(users.userName, username))
+    .limit(1);
+  
+  if (!result[0]) {
     return null; 
   }
   return result[0];
 }
-async VerifyExistingUser(userName: string): Promise<boolean> {
-    const result = await db
-    .select()
-    .from(users)
-    .where(eq(users.userName, userName))
-    .limit(1);
-    console.log("voici result ");
-  return result.length > 0;
-}
-
-async register(username: string, password: string): Promise<void>  {
-const saltRounds = 10;
-const hashedPassword = await bcrypt.hash(password, saltRounds);
+async register(username: string, passwordHashed: string): Promise<void>  {
 await db.insert(users).values({
   userName: username,
-  password: hashedPassword
+  password: passwordHashed
 });
 }
 }

@@ -48,26 +48,11 @@ export class BoatController {
       next(error);
     }
   };
-    validateDestinationPort=async (req: Request, res: Response) => {
-    try {
-      const destination = req.params.destination;
-      const isValid = await boatService.isValidDestination(destination);
-      if (!isValid) {
-        return res.status(400).json({ message: 'Invalid Port' });
-      }
-      res.status(200).json({ message: 'Valide Port' });
-    } catch (error) {
-      res.status(500).json({ message: 'Server Error' });
-    }
-  };
+ 
   navigateToAnotherPort= async (req: Request, res: Response) => {
     try {
       const destination = req.params.destination;
       const boat = req.body;
-      const isValid = await boatService.isValidDestination(destination);
-      if (!isValid) {
-        return res.status(400).json({ message: 'Invalid port.' });
-      }
       const response = await boatService.sendBoatToDestination(destination, boat);
       res.status(200).json(response);
     } catch (error) {
@@ -102,7 +87,6 @@ async getBoatsOnPort(req: Request, res: Response, next: NextFunction): Promise<R
     if (boats.length >= 8) {
       return res.status(400).json({ message: 'full ports.impossible the boat dock.' });
     }
-    console.log("je vais créer");
     const createdBoat = await boatService.addBoat(boat);
     return res.status(201).json({ message: 'Boat successfully docked..', boat: createdBoat });
   } catch (error) {

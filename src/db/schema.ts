@@ -35,15 +35,3 @@ export const boatTable = mysqlTable('boattable', {
     constraint: 'CHECK (crew_size BETWEEN 1 AND 500)',
   },
 }));
-
-export const tokenTable = mysqlTable('tokens', {
-  id: varchar('id', { length: 36 }).primaryKey(), 
-  username: varchar('username', { length: 255 }).notNull(), 
-  token: text('token').notNull(), 
-  issued_at: timestamp('issued_at').defaultNow().notNull(), 
-  expires_at: timestamp('expires_at').notNull(), 
-  revoked: boolean('revoked').default(false).notNull(), 
-  created_at: timestamp('created_at').defaultNow().notNull(), 
-  updated_at: timestamp('updated_at').defaultNow().onUpdateNow().notNull(), 
-});
-

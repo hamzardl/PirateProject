@@ -8,27 +8,61 @@ export class BoatService {
     async getAllBoats(): Promise<Boat[]> {
     return await boatRepository.getAllBoats();
   }
-  async addBoat(boat: Boat): Promise<Boat> {
-   const newBoat = {
-      ...boat,
-      id: uuidv4(),
-      createdAt: new Date(),
-     lastModified: new Date()
-    };
-    await boatRepository.addBoat(newBoat);
-    return newBoat;
+async addBoat(boat: Boat): Promise<Boat> {
+    try {
+      this.validateBoat(boat);
+
+      const newBoat: Boat = {
+        ...boat,
+        id: uuidv4(),
+        createdAt: new Date(),
+        lastModified: new Date()
+      };
+      await boatRepository.addBoat(newBoat);
+      return newBoat;
+    } catch (error) {
+      throw new Error((error as Error).message || 'Failed to add boat');
+    }
   }
   async deleteBoat(id: string): Promise<void> {
+   try {
+    if (id == null) {
+      throw new Error("id must not be null");
+    }
     await boatRepository.deleteBoat(id);
+  } catch (error) {
+    throw new Error((error as Error).message || "Failed to delete boat");
   }
-  async modifyBoat(updatedBoat: BoatRequestUpdate, id: string): Promise<BoatRequestUpdate | null> {
-    return await boatRepository.modifyBoat(updatedBoat,id);
   }
+async modifyBoat(updatedBoat: BoatRequestUpdate, id: string): Promise<BoatRequestUpdate | null> {
+  try {
+    if (updatedBoat.goldCargo < 0 || updatedBoat.goldCargo > 1_000_000) {
+      throw new Error('Gold cargo must be between 0 and 1,000,000.');
+    }
+    if (updatedBoat.captain.length < 2 || updatedBoat.captain.length > 50) {
+      throw new Error('Captain name must be between 2 and 50 characters.');
+    }
+    if (updatedBoat.crewSize < 1 || updatedBoat.crewSize > 500) {
+      throw new Error('Crew size must be between 1 and 500.');
+    }
+    if (
+      updatedBoat.status !== 'docked' &&
+      updatedBoat.status !== 'sailing' &&
+      updatedBoat.status !== 'lookingForAFight'
+    ) {
+      throw new Error('Status must be one of: docked, sailing, lookingForAFight.');
+    }
+    return await boatRepository.modifyBoat(updatedBoat, id);
+  } catch (error) {
+
+    throw new Error((error as Error).message || 'Failed to modify boat');
+  }
+}
+
 async isValidDestination(destination: string): Promise<boolean> {
   try {
-    const response = await axios.get(`${process.env.BROKER_BASE_URL}/users`, { headers });
-    const users = response.data.users;
-    return users.includes(destination);
+   const response:String[]= await this.getAvailablePortsFromBroker();
+    return response.includes(destination);
   } catch (error) {
     console.error('Error while retrieving ports.', error);
     return false;
@@ -36,6 +70,11 @@ async isValidDestination(destination: string): Promise<boolean> {
 }
 async sendBoatToDestination(destination: string, boat: BoatRequest): Promise<any> {
   try {
+    this.validateBoat(boat);
+      const isValid = await this.isValidDestination(destination);
+      if (!isValid) {
+            throw new Error("Invalid ports");
+      }
     const { data } = await axios.post(
       `${process.env.BROKER_BASE_URL}/ship/sail/${destination}`,
       boat,
@@ -46,8 +85,31 @@ async sendBoatToDestination(destination: string, boat: BoatRequest): Promise<any
     }
     return data;
     } catch (error: any) {
-    console.error('Erreur lors de l’envoie du bateau :', error.response?.data || error.message);
     throw new Error("Navigation Failure");
+  }
+}
+ validateBoat(boat: Boat | BoatRequest): void {
+  if (boat.name.length < 2 || boat.name.length > 100) {
+    throw new Error('Name must be between 2 and 100 characters.');
+  }
+
+  if (boat.goldCargo < 0 || boat.goldCargo > 1_000_000) {
+    throw new Error('Gold cargo must be between 0 and 1,000,000.');
+  }
+
+  if (boat.captain.length < 2 || boat.captain.length > 50) {
+    throw new Error('Captain name must be between 2 and 50 characters.');
+  }
+
+  if (boat.crewSize < 1 || boat.crewSize > 500) {
+    throw new Error('Crew size must be between 1 and 500.');
+  }
+  if (
+    boat.status !== 'docked' &&
+    boat.status !== 'sailing' &&
+    boat.status !== 'lookingForAFight'
+  ) {
+    throw new Error('Status must be one of: docked, sailing, lookingForAFight.');
   }
 }
    async getAvailablePortsFromBroker  (): Promise<string[]> {

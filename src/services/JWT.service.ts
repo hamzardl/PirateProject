@@ -6,8 +6,6 @@ export async function generateToken(user: userDTO): Promise<string> {
     username: user.userName,
     isAdmin:user.isAdmin
   };
-  console.log("voci playlaod ");
-  console.log(user.isAdmin);
   const secretKey = process.env.JWT_SECRET_KEY;
   if (!secretKey) {
     throw new Error('JWT_SECRET_KEY is not defined in environment variables');
