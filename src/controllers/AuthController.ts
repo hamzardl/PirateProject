@@ -18,18 +18,19 @@ export class AuthController {
         httpOnly: true,
         secure: true,
         sameSite: 'strict',
-       expires: new Date(Date.now() + 30 * 60 * 1000) 
+        expires: new Date(Date.now() + 30 * 60 * 1000) //expiration date is 30 minutes
       });
       res.status(200).json({ success: true, message: "Login successful" });
     } catch (error) {
       next(error); 
     }
   };
+
   register= async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
       const { username, password } = req.body;
         await authService.register(username, password);
-            res.status(200).json({ success: true, message: "Créeation réussis" });
+            res.status(200).json({ success: true, message: "Successful creation" });
     } catch (error) {
       next(error); 
     }

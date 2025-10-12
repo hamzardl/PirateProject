@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import { userDTO } from '../types/UserType.types';
 
 export async function generateToken(user: userDTO): Promise<string> {
+  // We build the payload with key user information (username and isAdmin).
   const payload = {
     username: user.userName,
     isAdmin:user.isAdmin

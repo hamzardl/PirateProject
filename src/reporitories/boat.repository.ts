@@ -17,7 +17,7 @@ export class BoatRepository {
   }
 
   async addBoat(boat: Boat): Promise<Boat> {
-  await db.insert(boatTable).values({
+    await db.insert(boatTable).values({
     id: boat.id,
     name: boat.name,
     goldCargo: boat.goldCargo,
@@ -27,12 +27,12 @@ export class BoatRepository {
     crewSize: boat.crewSize,
     createdBy: boat.createdBy,
     lastModified: new Date(boat.lastModified),
-  });
-  const result = await this.findById(boat.id);
-  if (!result) {
+   });
+   const result = await this.findById(boat.id);
+   if (!result) {
     throw new Error('Failed to create boat');
-  }
-  return result;
+   }
+   return result;
   }
   async deleteBoat(id: string): Promise<void> {
     await db.delete(boatTable).where(eq(boatTable.id, id));

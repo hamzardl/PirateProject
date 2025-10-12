@@ -39,10 +39,11 @@ async getUserByUsername(username: string) {
   }
   return result[0];
 }
+
 async register(username: string, passwordHashed: string): Promise<void>  {
-await db.insert(users).values({
+  await db.insert(users).values({
   userName: username,
   password: passwordHashed
-});
+  });
 }
 }

@@ -24,7 +24,7 @@ async register(username: string, password: string): Promise<void> {
     throw new Error('user already exist');
   } else {
     const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);//meme hashpas ici dans service 
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
     await userRepository.register(username, hashedPassword);
   }
 }

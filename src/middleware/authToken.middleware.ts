@@ -13,6 +13,9 @@ export interface AuthenticatedRequest extends Request {
     isAdmin: boolean;
   };
 }
+/*req is the request object, which contains all the information about the HTTP request 
+sent by a client.
+req.cookies is a JavaScript object that contains all the cookies sent by the client. */
 export const authenticateToken = (
   req: AuthenticatedRequest,
   res: Response,
@@ -27,6 +30,11 @@ export const authenticateToken = (
     res.status(401).json({ success: false, message: 'Access denied. No token provided.' });
     return;
   }
+  /* We verify the JWT token using the secret key.
+   If the token is valid, we retrieve the data it contains (the payload), in this case: 
+   username and isAdmin.
+   Then, we attach this information to the req (request) object so that it's available
+  */
 try {
   const decoded = jwt.verify(token, SECRET_KEY) as { username: string; isAdmin: boolean };
   req.user = {

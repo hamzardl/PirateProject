@@ -5,9 +5,9 @@ import axios from 'axios';
 const boatRepository = new BoatRepository();
 const headers = JSON.parse(process.env.HEADERS!);
 export class BoatService {
-    async getAllBoats(): Promise<Boat[]> {
+async getAllBoats(): Promise<Boat[]> {
     return await boatRepository.getAllBoats();
-  }
+}
 async addBoat(boat: Boat): Promise<Boat> {
     try {
       this.validateBoat(boat);
@@ -23,17 +23,19 @@ async addBoat(boat: Boat): Promise<Boat> {
     } catch (error) {
       throw new Error((error as Error).message || 'Failed to add boat');
     }
-  }
-  async deleteBoat(id: string): Promise<void> {
+}
+async deleteBoat(id: string): Promise<void> {
    try {
     if (id == null) {
       throw new Error("id must not be null");
     }
     await boatRepository.deleteBoat(id);
-  } catch (error) {
+    } catch (error) {
     throw new Error((error as Error).message || "Failed to delete boat");
-  }
-  }
+    }
+}
+  /* I added an additional validation here besides the method validation,  
+   so I chose to validate only the minimum required parameters. */
 async modifyBoat(updatedBoat: BoatRequestUpdate, id: string): Promise<BoatRequestUpdate | null> {
   try {
     if (updatedBoat.goldCargo < 0 || updatedBoat.goldCargo > 1_000_000) {
@@ -53,12 +55,10 @@ async modifyBoat(updatedBoat: BoatRequestUpdate, id: string): Promise<BoatReques
       throw new Error('Status must be one of: docked, sailing, lookingForAFight.');
     }
     return await boatRepository.modifyBoat(updatedBoat, id);
-  } catch (error) {
-
+    } catch (error) {
     throw new Error((error as Error).message || 'Failed to modify boat');
-  }
+    }
 }
-
 async isValidDestination(destination: string): Promise<boolean> {
   try {
    const response:String[]= await this.getAvailablePortsFromBroker();
@@ -112,7 +112,7 @@ async sendBoatToDestination(destination: string, boat: BoatRequest): Promise<any
     throw new Error('Status must be one of: docked, sailing, lookingForAFight.');
   }
 }
-   async getAvailablePortsFromBroker  (): Promise<string[]> {
+async getAvailablePortsFromBroker  (): Promise<string[]> {
     try {
     const response = await axios.get(`${process.env.BROKER_BASE_URL}/users`, { headers });
     const ports = response.data.users;
