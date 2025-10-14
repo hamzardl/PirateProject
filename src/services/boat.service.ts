@@ -17,7 +17,12 @@ async addBoat(boat: BoatRequest): Promise<BoatRequest> {
         createdAt: new Date(),
         lastModified: new Date()
       };
-      await boatRepository.addBoat(newBoat);
+    const listBoats = await this.getAllBoats();
+    if (listBoats.length < 8) {
+        await boatRepository.addBoat(newBoat);
+    } else {
+        throw new Error("Cannot add more than 8 boats. Limit reached.");
+    }
       return newBoat;
     } catch (error) {
       throw new Error((error as Error).message || 'Failed to add boat');
