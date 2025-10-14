@@ -11,7 +11,6 @@ async getAllBoats(): Promise<Boat[]> {
 async addBoat(boat: BoatRequest): Promise<BoatRequest> {
     try {
       this.validateBoat(boat);
-
       const newBoat: Boat = {
         ...boat,
         id: uuidv4(),
@@ -35,7 +34,7 @@ async deleteBoat(id: string): Promise<void> {
     }
 }
   /* I added an additional validation here besides the method validation,  
-   so I chose to validate only the minimum required parameters. */
+   so I chose to validate only the minimum required parameters not all the parametre like the methode validateBoat. */
 async modifyBoat(updatedBoat: BoatRequestUpdate, id: string): Promise<BoatRequestUpdate | null> {
   try {
     if (updatedBoat.goldCargo < 0 || updatedBoat.goldCargo > 1_000_000) {
@@ -54,7 +53,9 @@ async modifyBoat(updatedBoat: BoatRequestUpdate, id: string): Promise<BoatReques
     ) {
       throw new Error('Status must be one of: docked, sailing, lookingForAFight.');
     }
-    return await boatRepository.modifyBoat(updatedBoat, id);
+      const existingBoat = await boatRepository.findById(id);
+      if (!existingBoat) {return null};
+      return await boatRepository.modifyBoat(updatedBoat, id);
     } catch (error) {
     throw new Error((error as Error).message || 'Failed to modify boat');
     }

@@ -13,8 +13,8 @@ export const createBoatRoutes = (): Router => {
   router.patch('/boat/:id',authenticateToken,isAdminRequired, boatController.modifyBoat);
   router.post('/auth', authController.login);
   router.post('/register', authController.register);
-  router.post('/navigateToAnotherPort/:destination',authenticateToken,isAdminRequired,boatController.navigateToAnotherPort);
+  router.post('/sailToPort/:destination',authenticateToken,isAdminRequired,boatController.sailToPort);
   router.get('/getAvailablePorts',authenticateToken,isAdminRequired, boatController.getAvailablePorts);
-  router.post('/ship/dock', boatController.getBoatsOnPort);
+  router.post('/ship/dock', boatController.dockShip);
   return router;
 };

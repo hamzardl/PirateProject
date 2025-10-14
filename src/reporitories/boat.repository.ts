@@ -38,8 +38,6 @@ export class BoatRepository {
     await db.delete(boatTable).where(eq(boatTable.id, id));
   }
 async modifyBoat(updatedBoat: BoatRequestUpdate, id: string): Promise<BoatRequestUpdate | null> {
-  const existing = await this.findById(id);
-  if (!existing) return null;
   await db.update(boatTable)
     .set({
       name:updatedBoat.name,

@@ -49,7 +49,7 @@ export class BoatController {
     }
   };
  
-  navigateToAnotherPort= async (req: Request, res: Response) => {
+  sailToPort= async (req: Request, res: Response) => {
     try {
       const destination = req.params.destination;
       const boat = req.body;
@@ -68,7 +68,7 @@ export class BoatController {
     }
   }
  
-async getBoatsOnPort(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
+async dockShip(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
   try {
     const clientId = req.headers['x-client-id'];
     const appTokens = req.headers['authorization'];

@@ -31,8 +31,8 @@ export const authenticateToken = (
     return;
   }
   /* We verify the JWT token using the secret key.
-   If the token is valid, we retrieve the data it contains (the payload), in this case: 
-   username and isAdmin.
+   If the token is valid, we retrieve the data it contains (the payload or claims), in this case: 
+   username and isAdmin, because iw ould like to use only this two cases
    Then, we attach this information to the req (request) object so that it's available
   */
 try {

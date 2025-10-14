@@ -1,6 +1,6 @@
 import { and, eq } from 'drizzle-orm';
 import { MySql2Database } from 'drizzle-orm/mysql2';
-import { todos, users } from '../db/schema';
+import {  users } from '../db/schema';
 import { v4 as uuidv4 } from 'uuid';
 import { db } from '../db/connection';
 import { User, userDTO } from '../types/UserType.types';

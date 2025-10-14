@@ -208,7 +208,7 @@ paths:
                   message:
                     type: string
                     example: Invalid username or password
-  /navigateToAnotherPort/{destination}:
+  /sailToPort/{destination}:
     post:
       summary: Naviguer vers un autre port
       description: Valide un port de destination et envoie le bateau vers ce port.
