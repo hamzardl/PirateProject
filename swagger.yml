@@ -54,12 +54,10 @@ paths:
             example:
               name: "Flying Dutchman"
               goldCargo: 75000
-              createdAt: "2025-09-13T12:00:00.000Z"
               captain: "Davy Jones"
               status: "docked"
               crewSize: 150
               createdBy: "user-uuid-3"
-              lastModified: "2025-09-13T12:00:00.000Z"
       responses:
         '201':
           description: Bateau créé avec succès
@@ -124,11 +122,11 @@ paths:
             schema:
               $ref: '#/components/schemas/BoatRequestUpdate'
             example:
+              name: "deded"
               goldCargo: 88000
               captain: "Edward Teach"
               status: "lookingForAFight"
               crewSize: 120
-              lastModified: "2025-09-13T14:30:00.000Z"
       responses:
         '200':
           description: Bateau modifié avec succès
@@ -237,7 +235,7 @@ paths:
               status: "sailing"
               crewSize: 150
               createdBy: "user-uuid-3"
-              lastModified: "2025-09-13T12:00:00.000Z"
+
       responses:
         '200':
           description: Bateau envoyé avec succès
@@ -443,9 +441,6 @@ components:
           type: integer
           minimum: 0
           maximum: 1000000
-        created_at:
-          type: string
-          format: date-time
         captain:
           type: string
         status:
@@ -461,13 +456,12 @@ components:
         created_by:
           type: string
           format: uuid
-        last_modified:
-          type: string
-          format: date-time
 
     BoatRequestUpdate:
       type: object
       properties:
+        name:
+          type: string
         goldCargo:
           type: integer
           minimum: 0
@@ -484,9 +478,6 @@ components:
           type: integer
           minimum: 1
           maximum: 500
-        last_modified:
-          type: string
-          format: date-time
     UserDTO:
       type: object
       required:

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { BoatService } from '../services/boat.service';
-import { Boat, BoatRequestUpdate } from '../types/boat.types';
+import { Boat, BoatRequest, BoatRequestUpdate } from '../types/boat.types';
 import { AuthenticatedRequest } from '../middleware/authToken.middleware';
 import axios from 'axios';
 
@@ -17,7 +17,7 @@ export class BoatController {
   };
 
   addBoat = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
-    const boat: Boat = req.body;
+    const boat: BoatRequest = req.body;
     try {
       const createdBoat = await boatService.addBoat(boat); 
       res.status(201).json(createdBoat);
@@ -72,7 +72,8 @@ async getBoatsOnPort(req: Request, res: Response, next: NextFunction): Promise<R
   try {
     const clientId = req.headers['x-client-id'];
     const appTokens = req.headers['authorization'];
-    const boat: Boat = req.body;
+    const boat: BoatRequest = req.body;
+    console.log(boat);
     if (!appTokens || !clientId) {
       return res.status(401).json({ message: 'App-Token ou Client-Id missed.' });
     }

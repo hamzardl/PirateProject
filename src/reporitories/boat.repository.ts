@@ -42,11 +42,11 @@ async modifyBoat(updatedBoat: BoatRequestUpdate, id: string): Promise<BoatReques
   if (!existing) return null;
   await db.update(boatTable)
     .set({
+      name:updatedBoat.name,
       goldCargo: updatedBoat.goldCargo,
       captain: updatedBoat.captain,
       status: updatedBoat.status,
       crewSize: updatedBoat.crewSize,
-      lastModified: new Date(updatedBoat.lastModified),
     })
     .where(eq(boatTable.id, id));
   const result = await this.findById(id);

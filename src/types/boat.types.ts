@@ -12,17 +12,15 @@ export type Boat = {
 export type BoatRequest = {
   name: string;
   goldCargo: number;
-  createdAt: Date;
   captain: string;
   status: 'docked' | 'sailing' | 'lookingForAFight';
   crewSize: number;
   createdBy: string;
-  lastModified: Date;
 };
 export type BoatRequestUpdate = {
+  name:string;
   goldCargo: number;
   captain: string;
   status: 'docked' | 'sailing' | 'lookingForAFight';
   crewSize: number;
-  lastModified: Date;
 };

@@ -8,7 +8,7 @@ export class BoatService {
 async getAllBoats(): Promise<Boat[]> {
     return await boatRepository.getAllBoats();
 }
-async addBoat(boat: Boat): Promise<Boat> {
+async addBoat(boat: BoatRequest): Promise<BoatRequest> {
     try {
       this.validateBoat(boat);
 
@@ -68,7 +68,7 @@ async isValidDestination(destination: string): Promise<boolean> {
     return false;
   }
 }
-async sendBoatToDestination(destination: string, boat: BoatRequest): Promise<any> {
+async sendBoatToDestination(destination: string, boat: Boat): Promise<any> {
   try {
     this.validateBoat(boat);
       const isValid = await this.isValidDestination(destination);
