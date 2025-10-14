@@ -3,8 +3,7 @@ info:
   title: Mon API
   version: 1.0.0
 servers:
-  - url: https://boatedwrdlhamza.me
-
+  - url: http://localhost:3001
 paths:
   /boats:
     get:
@@ -207,6 +206,40 @@ paths:
                   message:
                     type: string
                     example: Invalid username or password
+     
+  /me:
+    get:
+      tags:
+      - Auth
+      summary: Get the connected user
+      description: |
+        Returns information about the currently authenticated user.
+      operationId: getUserConnected
+      security:
+      - cookieAuth: []
+      responses:
+      '200':
+        description: Authenticated user returned
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: user
+      '401':
+        description: User not authenticated or token missing
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: User not authenticated
+
+                    
   /sailToPort/{destination}:
     post:
       summary: Naviguer vers un autre port

@@ -3,6 +3,7 @@ import { User } from '../types/UserType.types'
 import { userDTO } from '../types/UserType.types'
 import { AuthService } from '../services/auth.service';
 import { generateToken } from '../services/JWT.service';
+import { AuthenticatedRequest } from '../middleware/authToken.middleware';
 const authService = new AuthService();
 export class AuthController {
  login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -35,4 +36,12 @@ export class AuthController {
       next(error); 
     }
   };
+
+  getUserConnected = async (req: AuthenticatedRequest, res: Response) => {
+    if (!req.user) {
+      return res.status(401).json({ message: 'Utilisateur non connecté' });
+    }
+    res.json({ username: req.user.username });
+  };
+
 }

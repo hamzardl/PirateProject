@@ -1,5 +1,6 @@
 import { mysqlTable, varchar, boolean, timestamp, mysqlEnum, int, text } from 'drizzle-orm/mysql-core';
 import { sql } from 'drizzle-orm';
+
 export const users = mysqlTable("User", {
   id: varchar("Id", { length: 36 }).primaryKey().notNull().default(sql`UUID()`),
   userName: varchar("UserName", { length: 200 }).notNull(),

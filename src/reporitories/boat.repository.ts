@@ -49,7 +49,7 @@ async modifyBoat(updatedBoat: BoatRequestUpdate, id: string): Promise<BoatReques
   const result = await this.findById(id);
   return result ? this.mapToBoat(result) : null;
 }
-      private mapToBoat(row: Boat): Boat {
+private mapToBoat(row: Boat): Boat {
         return {
           id: row.id,            
           name: row.name,         

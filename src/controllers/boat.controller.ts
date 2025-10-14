@@ -25,7 +25,8 @@ export class BoatController {
       next(error);
     }
   };
-     deleteBoat = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
+
+   deleteBoat = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     const { id } = req.params;
     try {
       await boatService.deleteBoat(id);
@@ -48,7 +49,7 @@ export class BoatController {
       next(error);
     }
   };
- 
+
   sailToPort= async (req: Request, res: Response) => {
     try {
       const destination = req.params.destination;
@@ -59,6 +60,7 @@ export class BoatController {
       res.status(500).json({ message: 'Error whiling sailing' });
     }
   }
+
   getAvailablePorts=async (req: Request, res: Response): Promise<void> => {
     try {
       const ports = await boatService.getAvailablePortsFromBroker();
@@ -68,7 +70,7 @@ export class BoatController {
     }
   }
  
-async dockShip(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
+ async dockShip(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
   try {
     const clientId = req.headers['x-client-id'];
     const appTokens = req.headers['authorization'];
@@ -94,8 +96,6 @@ async dockShip(req: Request, res: Response, next: NextFunction): Promise<Respons
     next(error);
   }
 }
-
-
 
 }
 
