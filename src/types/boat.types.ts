@@ -21,6 +21,5 @@ export type BoatRequestUpdate = {
   name:string;
   goldCargo: number;
   captain: string;
-  status: 'docked' | 'sailing' | 'lookingForAFight';
   crewSize: number;
 };

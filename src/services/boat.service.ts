@@ -46,13 +46,6 @@ async modifyBoat(updatedBoat: BoatRequestUpdate, id: string): Promise<BoatReques
     if (updatedBoat.crewSize < 1 || updatedBoat.crewSize > 500) {
       throw new Error('Crew size must be between 1 and 500.');
     }
-    if (
-      updatedBoat.status !== 'docked' &&
-      updatedBoat.status !== 'sailing' &&
-      updatedBoat.status !== 'lookingForAFight'
-    ) {
-      throw new Error('Status must be one of: docked, sailing, lookingForAFight.');
-    }
       const existingBoat = await boatRepository.findById(id);
       if (!existingBoat) {return null};
       return await boatRepository.modifyBoat(updatedBoat, id);

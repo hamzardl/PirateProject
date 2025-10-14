@@ -125,7 +125,6 @@ paths:
               name: "deded"
               goldCargo: 88000
               captain: "Edward Teach"
-              status: "lookingForAFight"
               crewSize: 120
       responses:
         '200':
@@ -466,12 +465,6 @@ components:
           maximum: 1000000
         captain:
           type: string
-        status:
-          type: string
-          enum:
-            - docked
-            - sailing
-            - lookingForAFight
         crewSize:
           type: integer
           minimum: 1

@@ -23,7 +23,7 @@ export class BoatRepository {
     goldCargo: boat.goldCargo,
     createdAt: new Date(boat.createdAt), 
     captain: boat.captain,
-    status: boat.status,
+    status: 'docked',//i force here the changement because once is created , the boat is docked
     crewSize: boat.crewSize,
     createdBy: boat.createdBy,
     lastModified: new Date(boat.lastModified),
@@ -43,7 +43,6 @@ async modifyBoat(updatedBoat: BoatRequestUpdate, id: string): Promise<BoatReques
       name:updatedBoat.name,
       goldCargo: updatedBoat.goldCargo,
       captain: updatedBoat.captain,
-      status: updatedBoat.status,
       crewSize: updatedBoat.crewSize,
     })
     .where(eq(boatTable.id, id));
