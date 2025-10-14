@@ -3,7 +3,7 @@ info:
   title: Mon API
   version: 1.0.0
 servers:
-  - url: http://localhost:3001
+  - url: https://boatedwrdlhamza.me
 
 paths:
   /boats:

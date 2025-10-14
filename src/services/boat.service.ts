@@ -18,6 +18,7 @@ async addBoat(boat: BoatRequest): Promise<BoatRequest> {
         lastModified: new Date()
       };
     const listBoats = await this.getAllBoats();
+    console.log(listBoats);
     if (listBoats.length < 8) {
         await boatRepository.addBoat(newBoat);
     } else {
