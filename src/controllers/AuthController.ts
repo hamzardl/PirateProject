@@ -38,10 +38,12 @@ export class AuthController {
   };
 
   getUserConnected = async (req: AuthenticatedRequest, res: Response) => {
+    console.log("voici mon utilisateur connecté");
     if (!req.user) {
       return res.status(401).json({ message: 'Utilisateur non connecté' });
     }
-    res.json({ username: req.user.username });
+    console.log(req.user?.username);
+    return res.status(200).json({ username: req.user.username });
   };
 
 }

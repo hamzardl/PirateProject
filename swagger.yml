@@ -205,19 +205,18 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Invalid username or password
-     
+                    example: Invalid username or password 
   /me:
     get:
-      tags:
+     tags:
       - Auth
-      summary: Get the connected user
-      description: |
-        Returns information about the currently authenticated user.
-      operationId: getUserConnected
-      security:
-      - cookieAuth: []
-      responses:
+     summary: Get the connected user
+     description: |
+      Returns information about the currently authenticated user.
+     operationId: getUserConnected
+     security:
+      - cookieAuth: [] 
+     responses:
       '200':
         description: Authenticated user returned
         content:
@@ -238,8 +237,7 @@ paths:
                 message:
                   type: string
                   example: User not authenticated
-
-                    
+         
   /sailToPort/{destination}:
     post:
       summary: Naviguer vers un autre port
@@ -515,3 +513,8 @@ components:
           type: string
         password:
           type: string
+    securitySchemes:
+      cookieAuth:
+        type: apiKey
+        in: cookie
+        name: token 
