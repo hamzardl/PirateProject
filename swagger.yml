@@ -56,7 +56,6 @@ paths:
               captain: "Davy Jones"
               status: "docked"
               crewSize: 150
-              createdBy: "user-uuid-3"
       responses:
         '201':
           description: Bateau créé avec succès
@@ -238,34 +237,25 @@ paths:
                   type: string
                   example: User not authenticated
          
-  /sailToPort/{destination}:
+  /sailToPort/{idShip}/{destination}:
     post:
       summary: Naviguer vers un autre port
       description: Valide un port de destination et envoie le bateau vers ce port.
       tags:
         - Boat
       parameters:
+        - name: idShip
+          in: path
+          required: true
+          description: id
+          schema:
+            type: string
         - name: destination
           in: path
           required: true
           description: Nom ou identifiant du port de destination
           schema:
             type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/BoatRequest'
-            example:
-              name: "hamza "
-              goldCargo: 75000
-              createdAt: "2025-09-13T12:00:00.000Z"
-              captain: "Davy Jones"
-              status: "sailing"
-              crewSize: 150
-              createdBy: "user-uuid-3"
-
       responses:
         '200':
           description: Bateau envoyé avec succès
@@ -461,7 +451,6 @@ components:
         - captain
         - status
         - crewSize
-        - created_by
       properties:
         name:
           type: string
@@ -481,10 +470,6 @@ components:
           type: integer
           minimum: 1
           maximum: 500
-        created_by:
-          type: string
-          format: uuid
-
     BoatRequestUpdate:
       type: object
       properties:
@@ -518,3 +503,26 @@ components:
         type: apiKey
         in: cookie
         name: token 
+    BoatShipDock:
+      type: object
+      properties:
+        name:
+          type: string
+        goldCargo:
+          type: integer
+          minimum: 0
+          maximum: 1000000
+        createdAt:
+          type: string
+          format: date-time
+        captain:
+          type: string
+        status:
+          type: string
+          enum: [docked, sailing, lookingForAFight]
+        crewSize:
+          type: integer
+          minimum: 1
+          maximum: 500
+        createdBy:
+          type: string

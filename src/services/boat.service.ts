@@ -1,24 +1,44 @@
-import { Boat, BoatRequest, BoatRequestUpdate } from '../types/boat.types';
+import { Boat, BoatRequest, BoatRequestUpdate, BoatShipDock } from '../types/boat.types';
 import { BoatRepository } from '../reporitories/boat.repository';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
+import { AuthenticatedRequest } from '../middleware/authToken.middleware';
 const boatRepository = new BoatRepository();
 const headers = JSON.parse(process.env.HEADERS!);
 export class BoatService {
 async getAllBoats(): Promise<Boat[]> {
     return await boatRepository.getAllBoats();
 }
-async addBoat(boat: BoatRequest): Promise<BoatRequest> {
+async addBoat(req: AuthenticatedRequest,boat: BoatRequest): Promise<BoatRequest> {
     try {
       this.validateBoat(boat);
       const newBoat: Boat = {
         ...boat,
         id: uuidv4(),
+        createdBy:req.user!.username,
         createdAt: new Date(),
         lastModified: new Date()
       };
     const listBoats = await this.getAllBoats();
-    console.log(listBoats);
+    if (listBoats.length < 8) {
+        await boatRepository.addBoat(newBoat);
+    } else {
+        throw new Error("Cannot add more than 8 boats. Limit reached.");
+    }
+      return newBoat;
+    } catch (error) {
+      throw new Error((error as Error).message || 'Failed to add boat');
+    }
+}
+async addBoatFromShipDock(boat:BoatShipDock): Promise<BoatShipDock> {
+  console.log("je susi arrive ici ");
+    try {
+      const newBoat: Boat = {
+        ...boat,
+        id: uuidv4(),
+        lastModified: new Date()
+      };
+    const listBoats = await this.getAllBoats();
     if (listBoats.length < 8) {
         await boatRepository.addBoat(newBoat);
     } else {
@@ -68,8 +88,48 @@ async isValidDestination(destination: string): Promise<boolean> {
     return false;
   }
 }
-async sendBoatToDestination(destination: string, boat: Boat): Promise<any> {
+async sendBoatToDestination(destination: string, idShip: string): Promise<any> {
   try {
+    const boatship: Boat | null = await boatRepository.findById(idShip);
+    if (!boatship) {
+      throw new Error(`Bateau avec l'ID ${idShip} introuvable`);
+    }
+    console.log("vociice que j'Ai recu par un findbyid");
+    console.log(boatship);
+  const boat: BoatShipDock = {
+  name: boatship.name,
+  goldCargo: boatship.goldCargo,
+  createdAt: boatship.createdAt,
+  captain: boatship.captain,
+  status: boatship.status,
+  crewSize: boatship.crewSize,
+  createdBy: boatship.createdBy,
+  };
+    this.validateBoat(boat);
+      const isValid = await this.isValidDestination(destination);
+      if (!isValid) {
+            throw new Error("Invalid ports");
+      }
+    const { data } = await axios.post(
+      `${process.env.BROKER_BASE_URL}/ship/sail/${destination}`,
+      boat,
+      { headers }
+    );
+    if (data.statusCode && data.statusCode !== 200) {
+      throw new Error(data.statusMessage || "Unknown error occurred during navigation.");
+    }
+    this.deleteBoat(idShip);
+    return data;
+    } catch (error: any) {
+    throw new Error("Navigation Failure");
+  }
+}
+/*
+async sendBoatToDestination(destination: string, boat: BoatShipDock): Promise<any> {
+  try {
+  
+    console.log("voic mon boat qui arrive de swagger ");
+    console.log(boat);
     this.validateBoat(boat);
       const isValid = await this.isValidDestination(destination);
       if (!isValid) {
@@ -87,7 +147,7 @@ async sendBoatToDestination(destination: string, boat: Boat): Promise<any> {
     } catch (error: any) {
     throw new Error("Navigation Failure");
   }
-}
+}*/
  validateBoat(boat: Boat | BoatRequest): void {
   if (boat.name.length < 2 || boat.name.length > 100) {
     throw new Error('Name must be between 2 and 100 characters.');

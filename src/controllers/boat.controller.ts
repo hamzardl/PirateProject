@@ -19,7 +19,7 @@ export class BoatController {
   addBoat = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> => {
     const boat: BoatRequest = req.body;
     try {
-      const createdBoat = await boatService.addBoat(boat); 
+      const createdBoat = await boatService.addBoat(req,boat); 
       res.status(201).json(createdBoat);
     } catch (error) {
       next(error);
@@ -53,8 +53,8 @@ export class BoatController {
   sailToPort= async (req: Request, res: Response) => {
     try {
       const destination = req.params.destination;
-      const boat = req.body;
-      const response = await boatService.sendBoatToDestination(destination, boat);
+      const idShip = req.params.idShip;
+      const response = await boatService.sendBoatToDestination(destination, idShip);
       res.status(200).json(response);
     } catch (error) {
       res.status(500).json({ message: 'Error whiling sailing' });
@@ -74,8 +74,8 @@ export class BoatController {
   try {
     const clientId = req.headers['x-client-id'];
     const appTokens = req.headers['authorization'];
-    const boat: BoatRequest = req.body;
-    console.log(boat);
+    const boat = req.body;
+
     if (!appTokens || !clientId) {
       return res.status(401).json({ message: 'App-Token ou Client-Id missed.' });
     }
@@ -90,7 +90,7 @@ export class BoatController {
     if (boats.length >= 8) {
       return res.status(400).json({ message: 'full ports.impossible the boat dock.' });
     }
-    const createdBoat = await boatService.addBoat(boat);
+    const createdBoat = await boatService.addBoatFromShipDock(boat);
     return res.status(201).json({ message: 'Boat successfully docked..', boat: createdBoat });
   } catch (error) {
     next(error);
