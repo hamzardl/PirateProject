@@ -9,7 +9,7 @@ export type Boat = {
   createdBy : string;
   lastModified : Date;
 };
-export type BoatShipDock = {
+export type BoatFromOtherPort = {
   name: string;
   goldCargo: number;
   createdAt  : Date;

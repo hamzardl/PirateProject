@@ -1,4 +1,4 @@
-import { Boat, BoatRequest, BoatRequestUpdate, BoatShipDock } from '../types/boat.types';
+import { Boat, BoatRequest, BoatRequestUpdate, BoatFromOtherPort } from '../types/boat.types';
 import { BoatRepository } from '../reporitories/boat.repository';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
@@ -30,8 +30,7 @@ async addBoat(req: AuthenticatedRequest,boat: BoatRequest): Promise<BoatRequest>
       throw new Error((error as Error).message || 'Failed to add boat');
     }
 }
-async addBoatFromShipDock(boat:BoatShipDock): Promise<BoatShipDock> {
-  console.log("je susi arrive ici ");
+async addBoatToDock(boat:BoatFromOtherPort): Promise<BoatFromOtherPort> {
     try {
       const newBoat: Boat = {
         ...boat,
@@ -94,9 +93,7 @@ async sendBoatToDestination(destination: string, idShip: string): Promise<any> {
     if (!boatship) {
       throw new Error(`Bateau avec l'ID ${idShip} introuvable`);
     }
-    console.log("vociice que j'Ai recu par un findbyid");
-    console.log(boatship);
-  const boat: BoatShipDock = {
+  const boat: BoatFromOtherPort = {
   name: boatship.name,
   goldCargo: boatship.goldCargo,
   createdAt: boatship.createdAt,
@@ -124,30 +121,6 @@ async sendBoatToDestination(destination: string, idShip: string): Promise<any> {
     throw new Error("Navigation Failure");
   }
 }
-/*
-async sendBoatToDestination(destination: string, boat: BoatShipDock): Promise<any> {
-  try {
-  
-    console.log("voic mon boat qui arrive de swagger ");
-    console.log(boat);
-    this.validateBoat(boat);
-      const isValid = await this.isValidDestination(destination);
-      if (!isValid) {
-            throw new Error("Invalid ports");
-      }
-    const { data } = await axios.post(
-      `${process.env.BROKER_BASE_URL}/ship/sail/${destination}`,
-      boat,
-      { headers }
-    );
-    if (data.statusCode && data.statusCode !== 200) {
-      throw new Error(data.statusMessage || "Unknown error occurred during navigation.");
-    }
-    return data;
-    } catch (error: any) {
-    throw new Error("Navigation Failure");
-  }
-}*/
  validateBoat(boat: Boat | BoatRequest): void {
   if (boat.name.length < 2 || boat.name.length > 100) {
     throw new Error('Name must be between 2 and 100 characters.');

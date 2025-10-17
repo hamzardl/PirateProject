@@ -90,7 +90,7 @@ export class BoatController {
     if (boats.length >= 8) {
       return res.status(400).json({ message: 'full ports.impossible the boat dock.' });
     }
-    const createdBoat = await boatService.addBoatFromShipDock(boat);
+    const createdBoat = await boatService.addBoatToDock(boat);
     return res.status(201).json({ message: 'Boat successfully docked..', boat: createdBoat });
   } catch (error) {
     next(error);
