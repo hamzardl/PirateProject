@@ -1,8 +1,8 @@
 # le nom du site:
-Boat.edwrdlhamza.me est le nom de site 
+edwrdlhamza.me est le nom de site 
 
 ##  Description
-Boat.edwrdlhamza.me est le site qui permet à un utilisateur de consulter les bateaux dans leurs ports , ainsi qu'au admin leur permet de créer,modifier,supprimer le bateau ainsi que réceptionner les bateaux vers le ports ainsi que d'envoyer les bateaux vers le totale des ports.
+edwrdlhamza.me est le site qui permet à un utilisateur de consulter les bateaux dans leurs ports , ainsi qu'au admin leur permet de créer,modifier,supprimer le bateau ainsi que réceptionner les bateaux vers le ports ainsi que d'envoyer les bateaux vers le totale des ports.
 
 ## Fonctionnalités principales
 -Créer des bateaux 
@@ -20,7 +20,7 @@ Boat.edwrdlhamza.me est le site qui permet à un utilisateur de consulter les ba
 Hamza Mahjoubi
 
 ## Lien
-https://boat.edwrdlhamza.me
+https://edwrdlhamza.me
 
 
 https://github.com/hamzardl/PirateProject.git
