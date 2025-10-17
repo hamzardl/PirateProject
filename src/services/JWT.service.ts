@@ -11,6 +11,6 @@ export async function generateToken(user: userDTO): Promise<string> {
   if (!secretKey) {
     throw new Error('JWT_SECRET_KEY is not defined in environment variables');
   }
-  const token = jwt.sign(payload, secretKey, { expiresIn: '7d' });
+  const token = jwt.sign(payload, secretKey, { expiresIn: '30m' });
   return token;
 }

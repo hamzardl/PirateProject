@@ -17,8 +17,6 @@ export class BoatRepository {
   }
 
   async addBoat(boat: Boat): Promise<Boat> {
-    console.log("dans le repositry");
-    console.log(boat);
     await db.insert(boatTable).values({
     id: boat.id,
     name: boat.name,

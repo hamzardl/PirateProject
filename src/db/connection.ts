@@ -8,7 +8,7 @@ const dbName = process.env.DB_NAME || 'boat_api';
 const host = process.env.DB_HOST || 'localhost';
 const port = parseInt(process.env.DB_PORT || '3306');
 const user = process.env.DB_USER || 'root';
-const password = process.env.DB_PASSWORD || 'root';
+const password = process.env.DB_PASSWORD || 'Patate123';
 async function ensureDatabaseExists() {
   const connection = await mysql.createConnection({
     host,

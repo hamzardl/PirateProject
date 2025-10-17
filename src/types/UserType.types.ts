@@ -1,5 +1,5 @@
 export interface User {
-  id: string;         // ← même si c’est un GUID côté backend
+  id: string;         
   userName: string;
   password: string;
 }
